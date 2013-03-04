@@ -2047,6 +2047,33 @@ class CF_Object
         return NULL;
     }
 
+    /**
+     * String representation of the Object's public URI of sae domain name
+     *
+     * A string representing the Object's public URI of sae
+     *
+     * Example:
+     * <code>
+     * # ... authentication/connection/container code excluded
+     * # ... see previous examples
+     *
+     * # Print out the Object's CDN URI (if it has one) in an HTML img-tag
+     * #
+     * print "<img src='$pic->sae_public_uri()' />\n";
+     * </code>
+     *
+     * @return string Object's public URI of SAE or NULL
+     */
+
+    function sae_public_uri()
+    {
+        $storage_url = $this->container->cfs_http->getStorageUrl();
+        $explode_storage_url = explode("_", $storage_url);
+        $appname = $explode_storage_url[1];
+        $sae_public_uri = 'http://'.$appname.'-'.$this->container->name.'.stor.sinaapp.com/'.$this->name;
+        return($sae_public_uri);        
+    }
+
        /**
      * String representation of the Object's public SSL URI
      *
