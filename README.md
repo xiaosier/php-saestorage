@@ -16,7 +16,7 @@ PHP SDK For SAE Storage
 
 ``` php
 <?php
-require_once('cloudfiles.php');
+require_once('saestorage.php');
 $auth = new CF_Authentication('your accesskey', 'your secretkey', NULL, "https://auth.sinas3.com");
 $auth->authenticate();
 $conn = new CF_Connection($auth);
@@ -29,7 +29,7 @@ $re = $bday->write('This is just frist test');
 
 ``` php
 <?php
-require_once('cloudfiles.php');
+require_once('saestorage.php');
 $auth = new CF_Authentication('k5nmzy5445', 'lzxkxy0x2iyili3k113iiw1mz5kimlwk33j5wyl1', NULL, "https://auth.sinas3.com");
 $auth->authenticate();
 $conn = new CF_Connection($auth);
@@ -42,7 +42,7 @@ var_dump($info);
 
 ``` php
 <?php
-require_once('cloudfiles.php');
+require_once('saestorage.php');
 $auth = new CF_Authentication('k5nmzy5445', 'lzxkxy0x2iyili3k113iiw1mz5kimlwk33j5wyl1', NULL, "https://auth.sinas3.com");
 $auth->authenticate();
 $conn = new CF_Connection($auth);
@@ -55,7 +55,7 @@ $doc->load_from_filename('./README');
 
 ``` php
 <?php
-require_once('cloudfiles.php');
+require_once('saestorage.php');
 $auth = new CF_Authentication('k5nmzy5445', 'lzxkxy0x2iyili3k113iiw1mz5kimlwk33j5wyl1', NULL, "https://auth.sinas3.com");
 $auth->authenticate();
 $conn = new CF_Connection($auth);
@@ -66,7 +66,7 @@ $doc = $file->delete_object("first_test.txt");
 获取文件的url
 ``` php
 <?php
-require_once('cloudfiles.php');
+require_once('saestorage.php');
 $auth = new CF_Authentication('k5nmzy5445', 'lzxkxy0x2iyili3k113iiw1mz5kimlwk33j5wyl1', NULL, "https://auth.sinas3.com");
 $auth->authenticate();
 $conn = new CF_Connection($auth);
