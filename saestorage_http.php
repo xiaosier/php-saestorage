@@ -27,7 +27,7 @@
 
 /**
  */
-require_once("cloudfiles_exceptions.php");
+require_once("saestorage_exceptions.php");
 
 define("PHP_CF_VERSION", "1.7.11");
 define("USER_AGENT", sprintf("STORAGE-API-SAERUNTIME/%s", PHP_CF_VERSION));
@@ -57,9 +57,9 @@ define("CDN_ACL_REFERRER", "X-Sws-Referrer-ACL");
 define("CDN_TTL", "X-Sws-TTL");
 define("CDNM_URL", "X-Sws-CDN-Management-Url");
 define("STORAGE_URL", "X-Storage-Url");
-define("AUTH_TOKEN", "X-Sws-Auth-Token");
-define("AUTH_USER_HEADER", "X-Sws-Auth-User");
-define("AUTH_KEY_HEADER", "X-Sws-Auth-Key");
+define("AUTH_TOKEN", "X-Auth-Token");
+define("AUTH_USER_HEADER", "X-Auth-User");
+define("AUTH_KEY_HEADER", "X-Auth-Key");
 define("AUTH_USER_HEADER_LEGACY", "X-Sws-Storage-User");
 define("AUTH_KEY_HEADER_LEGACY", "X-Sws-Storage-Pass");
 define("AUTH_TOKEN_LEGACY", "X-Sws-Storage-Token");
