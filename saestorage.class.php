@@ -325,7 +325,7 @@ class SaeStorage
                 'content_type'=>$small['content_type'],
                 'length'=>$small['content_length'],
                 'md5sum'=>$small['etag'],
-                'expires'=>$small['metadata']['Expires-Rule']
+                'expires'=>array_key_exists('Expires-Rule', $small['metadata'])?$small['metadata']['Expires-Rule']:NULL
                 );
         }
         return $list_detail_new;
@@ -822,7 +822,7 @@ class SaeStorage
         $_array = is_object($stdclassobject) ? get_object_vars($stdclassobject) : $stdclassobject;
         $array = array();
         foreach ($_array as $key => $value) {
-            $value = (is_array($value) || is_object($value)) ? std_class_object_to_array($value) : $value;
+            $value = (is_array($value) || is_object($value)) ? $this->std_class_object_to_array($value) : $value;
             $array[$key] = $value;
         }
 

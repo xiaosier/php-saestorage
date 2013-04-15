@@ -1866,7 +1866,7 @@ class CF_Object
     public $metadata;
     public $headers;
     public $manifest;
-    private $etag;
+    public $etag;
 
     /**
      * Class constructor
