@@ -56,6 +56,42 @@ var_dump($result);
 ?>
 ```
 
+获取一个文件URL地址
+
+``` php
+<?php
+require_once('saestorage.class.php');
+#your app accesskey
+$ak = 'k5nmzy5445';
+#your app secretkey
+$sk = 'lzxkxy0x2iyili3k113iiw1mz5kimlwk33j5wyl1';
+#your domain name
+$domain = 'lazy';
+$fileName = 'write_test.txt';
+$storage = new SaeStorage($ak, $sk);
+$fileUrl = $storage->getUrl($domain,$fileName);
+var_dump($fileUrl);
+?>
+```
+
+获取一个文件CDN URL地址(需要在SAE管理平台开启CDN)
+
+``` php
+<?php
+require_once('saestorage.class.php');
+#your app accesskey
+$ak = 'k5nmzy5445';
+#your app secretkey
+$sk = 'lzxkxy0x2iyili3k113iiw1mz5kimlwk33j5wyl1';
+#your domain name
+$domain = 'lazy';
+$fileName = 'write_test.txt';
+$storage = new SaeStorage($ak, $sk);
+$fileUrl = $storage->getCDNUrl($domain,$fileName);
+var_dump($fileUrl);
+?>
+```
+
 获取文件的属性
 
 ``` php
