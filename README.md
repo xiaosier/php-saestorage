@@ -177,6 +177,7 @@ $storage = new SaeStorage($ak, $sk);
 $filesNum = $storage->getFilesNum($domain);
 var_dump($filesNum);
 ?>
+```
 
 获取domain的容量信息
 
@@ -193,6 +194,7 @@ $storage = new SaeStorage($ak, $sk);
 $filesNum = $storage->getDomainCapacity($domain);
 var_dump($filesNum);
 ?>
+```
 
 判断文件是否存在
 
