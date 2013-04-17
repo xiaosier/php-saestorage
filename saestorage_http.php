@@ -30,7 +30,7 @@
 require_once("saestorage_exceptions.php");
 
 define("PHP_CF_VERSION", "1.7.11");
-define("USER_AGENT", sprintf("STORAGE-API-SAERUNTIME/%s", PHP_CF_VERSION));
+define("USER_AGENT", sprintf("STORAGE-API-SAEPUBLICRUNTIME/%s", PHP_CF_VERSION));
 define("MAX_HEADER_NAME_LEN", 128);
 define("MAX_HEADER_VALUE_LEN", 256);
 define("ACCOUNT_CONTAINER_COUNT", "X-Account-Container-Count");
@@ -129,6 +129,7 @@ class CF_Http
     private $_cdn_log_retention;
     private $_cdn_acl_user_agent;
     private $_cdn_acl_referrer;
+    private $_xpre;
 
     function __construct($api_version)
     {
@@ -189,6 +190,7 @@ class CF_Http
         $this->_cdn_log_retention = NULL;
         $this->_cdn_acl_user_agent = NULL;
         $this->_cdn_acl_referrer = NULL;
+        $this->_xpre = 'X-';
 
         # The OS list with a PHP without an updated CA File for CURL to
         # connect to SSL Websites. It is the first 3 letters of the PHP_OS
@@ -919,7 +921,8 @@ class CF_Http
         if (!is_array($cont->metadata)) {
             throw new SyntaxException("Metadata array is empty");
         }
-        $return_code = $this->_send_request("DEL_POST", $this->_make_path("STORAGE", $cont->name), $cont->metadata, "POST");
+        $headers = $this->domainAttrToHeader($cont->metadata);
+        $return_code = $this->_send_request("DEL_POST", $this->_make_path("STORAGE", $cont->name), $headers, "POST");
         switch ($return_code) {
         case 201:
         case 202:
@@ -955,7 +958,8 @@ class CF_Http
 
         $url_path = $this->_make_path("STORAGE", $obj->container->name,$obj->name);
 
-        $hdrs = $this->_headers($obj);
+        #$hdrs = $this->_headers($obj);
+        $hdrs = $this->fileAttrToHeader($obj->metadata);
         $return_code = $this->_send_request("DEL_POST",$url_path,$hdrs,"POST");
         switch ($return_code) {
         case 202:
@@ -1170,7 +1174,6 @@ class CF_Http
             return $header_len;
         list($name, $value) = explode(":", $header, 2);
         $value = trim($value);
-
         switch (strtolower($name)) {
         case strtolower(CDN_ENABLED):
             $this->_cdn_enabled = strtolower($value) == "true";
@@ -1543,6 +1546,89 @@ class CF_Http
             return False;
         }
         return curl_getinfo($this->connections[$conn_type], CURLINFO_HTTP_CODE);
+    }
+
+     ## Parse domain attr
+    public function domainAttrToHeader( $attr ) 
+    {
+        $headers = array();
+        if ( isset( $attr['private'] ) ) {
+            if ( ! $attr['private'] ) {
+                $headers[$this->_xpre . 'Container-Read'] = '.r:*';
+                $headers[$this->_xpre . 'Container-Meta-Web-Listings'] = 'false';
+            } else {
+                $headers[$this->_xpre . 'Container-Read'] = '0';
+            }
+        }
+        foreach ( $attr as $k => $v) {
+            switch ( $k ) {
+                case 'quotaLevel':
+                    $headers[$this->_xpre . 'Container-Meta-Quota'] = $v;
+                    break;
+                case '404Redirect':
+                    $headers[$this->_xpre . 'Container-Meta-Web-Error'] = $v;
+                    break;
+                case 'expires':
+                    if ( $v['active'] == 1 && ( isset($v['byType']) || isset($v['default']) ) )
+                        $headers[$this->_xpre . 'Container-Meta-Expires-Rule'] = json_encode($v);
+                    break;
+                case 'allowReferer':
+                    if ( !empty( $v['hosts'] ) ) {
+                        $rules = array();
+                        foreach( $v['hosts'] as $host ) {
+                            if ( $host ) $rules[] = '.r:' . $host;
+                        }
+                        if ( $v['redirect'] ) {
+                            $rules[] = '.rd:' . $v['redirect'];
+                        }
+                        $headers[$this->_xpre . 'Container-Read'] = join(',', $rules);
+                    }
+                    break;
+                case 'tag':
+                    $headers[$this->_xpre . 'Container-Meta-Tags'] = json_encode($v);
+                    break;
+                case 'list':
+                    if ($v) {
+                        $headers[$this->_xpre . 'Container-Meta-Web-Listings'] = 'true';
+                    } else {
+                        $headers[$this->_xpre . 'Container-Meta-Web-Listings'] = 'false';
+                    }
+                    break;
+            }
+        }
+
+        return $headers;
+    }
+
+    ##Parse file Attr
+    #
+    public function fileAttrToHeader( $attr ) 
+    {
+        $headers = array();
+        foreach ( $attr as $k => $v) {
+            switch ( strtolower($k) ) {
+                case 'private':
+                    $headers[$this->_xpre . 'Object-Meta-Private'] = $v ? '1' : '0';
+                    break;
+                case 'expires':
+                    $headers[$this->_xpre . 'Object-Meta-Expires-Rule'] = $v;
+                    break;
+                case 'type':
+                    $headers['Content-Type'] = $v;
+                    break;
+                case 'encoding':
+                    $headers['Content-Encoding'] = $v;
+                    break;
+                case 'disposition':
+                    $headers['Content-Disposition'] = $v;
+                    break;
+                case 'md5':
+                    $headers['ETag'] = $v;
+                    break;
+            }
+        }
+
+        return $headers;
     }
     
     function close()

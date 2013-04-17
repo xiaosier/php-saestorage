@@ -10,6 +10,7 @@
  * @package sae
  */
 require_once('swiftclient.php');
+define('SAE_CDN_ENABLED',false);
 
 class SaeStorage
 {
@@ -352,8 +353,6 @@ class SaeStorage
             return false;
         }
 
-        //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        /* 直接在本地和远程交互实现*/
         $container = $this->swift_conn->get_container($domain);
         $list_detail = $container->get_objects($limit,$offset,NULL,$path);
         $list_detail_array = $this->std_class_object_to_array($list_detail);
@@ -365,7 +364,7 @@ class SaeStorage
                 'content_type'=>$small['content_type'],
                 'length'=>$small['content_length'],
                 'md5sum'=>$small['etag'],
-                'expires'=>$small['metadata']['Expires-Rule']
+                'expires'=>array_key_exists('Expires-Rule', $small['metadata'])?$small['metadata']['Expires-Rule']:NULL
                 );
         }
         return $list_detail_new;        
@@ -416,14 +415,14 @@ class SaeStorage
         $container = $this->swift_conn->get_container($domain);
         $object = $container->get_object($filename);
         $object = $this->std_class_object_to_array($object);
-        if(empty($object['last_modified'])) {
+        if(!empty($object['last_modified'])) {
             $file_attr = array(
                 'fileName'=>$object['name'],
                 'datetime'=>$object['last_modified'],
                 'content_type'=>$object['content_type'],
                 'length'=>$object['content_length'],
                 'md5sum'=>$object['etag'],
-                'expires'=>$object['metadata']['Expires-Rule']
+                'expires'=>array_key_exists('Expires-Rule', $object['metadata'])?$object['metadata']['Expires-Rule']:NULL
                 );
         } else {
             $file_attr = false;

@@ -934,6 +934,46 @@ class CF_Container
     }
 
     /**
+     * Store new Container metadata
+     *
+     * Write's an Container's metadata to the remote Container.  This will overwrite
+     * an prior Container metadata.
+     *
+     * Example:
+     * <code>
+     *
+     * $my_container = $conn->get_container("documents");
+     *
+     * # Define new metadata for the Container
+     * #
+     * $my_container->metadata = array(
+     *     'Expires-Rule'=>'{"active":1,"default":"modification  plus 1 day"}',
+     *     'Tags'=>'Test tag',
+     *     'Listings'=>'false',
+     * );
+     *
+     * # Push the new metadata up to the storage system
+     * #
+     * $my_container->sync_metadata();
+     * </code>
+     *
+     * @return boolean <kbd>True</kbd> if successful, <kbd>False</kbd> otherwise
+     * @throws InvalidResponseException unexpected response
+     */
+    function sync_metadata()
+    {
+        if (!empty($this->metadata)) {
+            $status = $this->cfs_http->post_container($this);
+            if (!in_array($status, array(204,202))) {
+                throw new InvalidResponseException("Invalid response ("
+                    .$status."): ".$this->cfs_http->get_error());
+            }
+            return True;
+        }
+        return False;
+    }
+
+    /**
      * Enable Container content to be served via CDN or modify CDN attributes
      *
      * Either enable this Container's content to be served via CDN or
@@ -1898,7 +1938,8 @@ class CF_Object
         $this->manifest = NULL;
         if ($dohead) {
             if (!$this->_initialize() && $force_exists) {
-                throw new NoSuchObjectException("No such object '".$name."'");
+                //throw new NoSuchObjectException("No such object '".$name."'");
+                return false;
             }
         }
     }
