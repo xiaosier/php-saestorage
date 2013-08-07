@@ -325,8 +325,7 @@ class SaeStorage
                 'datetime'=>$small['last_modified'],
                 'content_type'=>$small['content_type'],
                 'length'=>$small['content_length'],
-                'md5sum'=>$small['etag'],
-                'expires'=>array_key_exists('Expires-Rule', $small['metadata'])?$small['metadata']['Expires-Rule']:NULL
+                'md5sum'=>$small['etag']
                 );
         }
         return $list_detail_new;
