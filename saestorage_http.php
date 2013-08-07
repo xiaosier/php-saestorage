@@ -27,7 +27,7 @@
 
 /**
  */
-require_once("saestorage_exceptions.php");
+require_once( dirname(__FILE__)."/saestorage_exceptions.php");
 
 define("PHP_CF_VERSION", "1.7.11");
 define("USER_AGENT", sprintf("STORAGE-API-SAEPUBLICRUNTIME/%s", PHP_CF_VERSION));

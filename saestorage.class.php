@@ -5,11 +5,11 @@
  *
  * See COPYING for license information.
  *
- * @author Lazypeople <mingming6@staff.sina.com.cn>
+ * @author Lazypeople <lazy@changes.com.cn>
  * @copyright Copyright (c) 2013, Sina App Engine.
  * @package sae
  */
-require_once('swiftclient.php');
+require_once(dirname(__FILE__).'/swiftclient.php');
 define('SAE_CDN_ENABLED',false);
 
 class SaeStorage
